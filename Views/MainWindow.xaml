@@ -1,0 +1,122 @@
+﻿<mah:MetroWindow x:Class="EmployeesManagementApp.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:vievmodels="clr-namespace:EmployeesManagementApp.ViewModels" 
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+        xmlns:local="clr-namespace:EmployeesManagementApp.Views.Resources"
+        d:DataContext="{d:DesignInstance Type=vievmodels:MainWindowViewModel}"
+        mc:Ignorable="d"
+        Title="Dziennik pracowników" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Name="MainMetroWindow">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding MainWindowClosedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <mah:MetroWindow.Resources>
+        <local:YesNoToBooleanConverter x:Key="YesNoToBooleanConverter"/>
+        <local:ReverseBooleanToVisibilityConverter x:Key="ReverseBooleanToVisibilityConverter"/>
+    </mah:MetroWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <DockPanel HorizontalAlignment="Left">
+            <Button 
+                Content="Dodaj"
+                Height="25"
+                Width="100"
+                Margin="5"
+                Command="{Binding AddEmployeeCommand}"
+                IsEnabled="{Binding CanAddData}"/>
+            <Button
+                Content="Edytuj"
+                Height="25"
+                Width="100"
+                Margin="5"
+                Command="{Binding EditEmployeeCommand}"
+                CommandParameter="{Binding SelectedEmployee}"/>
+            <Button
+                Content="Zwolnij"
+                Height="25"
+                Width="100"
+                Margin="5"
+                Command="{Binding DissmissEmployeeCommand}"
+                CommandParameter="{Binding ElementName=MainMetroWindow}"/>
+            <ComboBox
+                SelectedValue="{Binding FilterIsStillEmployed}"
+                ItemsSource="{Binding Filters}"
+                IsEnabled="{Binding CanDisplayData}"
+                DisplayMemberPath="SelectedFilter"
+                SelectedValuePath="Id"
+                Height="25"
+                Width="150"
+                Margin="5">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding FilterChangedCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+        </DockPanel>
+
+        <DockPanel HorizontalAlignment="Right">
+            <Button
+                Content="{Binding ContentButtonLogin}"
+                Command="{Binding LoginCommand}"
+                Margin="5"
+                Width="80"
+                Height="20"/>
+
+            <Button
+                Height="25"
+                Width="25"
+                Margin="5"
+                Padding="0"
+                Command="{Binding AppSettingsCommand}">
+                <Image Source="Resources/SettingsIcon.png" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Button>
+        </DockPanel>
+
+        <DataGrid 
+            Grid.Row="1"
+            Margin="5"
+            ItemsSource="{Binding Employees}"
+            SelectedItem="{Binding SelectedEmployee}"
+            CanUserAddRows="False"
+            IsReadOnly="true"
+            SelectionMode="Single"
+            AutoGenerateColumns="False"
+            Visibility="{Binding CanDisplayData, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Id}" Visibility="Hidden"/>
+                <DataGridTextColumn Binding="{Binding Name}" Header="Imię"/>
+                <DataGridTextColumn Binding="{Binding LastName}" Header="Nazwisko"/>
+                <DataGridTextColumn Binding="{Binding DateOfEmployment, StringFormat=dd-MM-yyyy}" Header="Data zatrudnienia"/>
+                <DataGridTextColumn Binding="{Binding DateOfDissmissed, StringFormat=dd-MM-yyyy}" Header="Data zwolnienia"/>
+                <DataGridTextColumn Binding="{Binding Position}" Header="Stanowisko"/>
+                <DataGridTextColumn Binding="{Binding Earnings}" Header="Zarobki/Msc"/>
+                <DataGridCheckBoxColumn Binding="{Binding IsStillEmployed}" Header="Czy pracownik jest zatrudniony?" />
+                <DataGridTextColumn Binding="{Binding Comments}" Header="Uwagi"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Label
+            Grid.Row="1"
+            Margin="5"
+            Content="{Binding HeaderText}"
+            FontSize="18"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="{Binding CanDisplayData, Converter={StaticResource ReverseBooleanToVisibilityConverter}}"/>
+    </Grid>
+</mah:MetroWindow>
