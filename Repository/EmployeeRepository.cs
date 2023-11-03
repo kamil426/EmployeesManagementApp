@@ -25,20 +25,22 @@ namespace EmployeesManagementApp.Repository
             }
         }
 
-        public void Add(EmployeeWrapper employee)
+        public void Add(EmployeeWrapper employee, string userName)
         {
             using (var context = new ApplicationDBContext())
             {
-                context.Employees.Add(employee.ToDao());
+                var userId = context.Users.Single(x => x.UserName == userName).Id;
+                context.Employees.Add(employee.ToDao(userId));
                 context.SaveChanges();
             }
         }
 
-        public void Edit(EmployeeWrapper employee)
+        public void Edit(EmployeeWrapper employee, string userName)
         {
             using (var context = new ApplicationDBContext())
             {
-                var employeeToUpdate = context.Employees.Single(x => x.Id == employee.Id);
+                var userId = context.Users.Single(x => x.UserName == userName).Id;
+                var employeeToUpdate = context.Employees.Single(x => x.Id == employee.Id && x.UserId == userId);
 
                 employeeToUpdate.Name = employee.Name;
                 employeeToUpdate.LastName = employee.LastName;
@@ -51,30 +53,33 @@ namespace EmployeesManagementApp.Repository
             }
         }
 
-        public IEnumerable<EmployeeWrapper> GetEmployees()
+        public IEnumerable<EmployeeWrapper> GetEmployees(string userName)
         {
             using (var context = new ApplicationDBContext())
             {
-                return context.Employees.ToList().Select(x => x.ToWrapper());
+                var userId = context.Users.Single(x => x.UserName == userName).Id;
+                return context.Employees.Where(x => x.UserId == userId)
+                    .ToList().Select(x => x.ToWrapper());
             }
         }
 
-        public IEnumerable<EmployeeWrapper> GetEmployees(int filterIsStillEmployed)
+        public IEnumerable<EmployeeWrapper> GetEmployees(int filterIsStillEmployed, string userName)
         {
             using (var context = new ApplicationDBContext())
             {
+                var userId = context.Users.Single(x => x.UserName == userName).Id;
                 var employees = new List<Employee>();
 
                 switch (filterIsStillEmployed)
                 {
                     case 0:
-                        employees = context.Employees.ToList();
+                        employees = context.Employees.Where(x => x.UserId == userId).ToList();
                         break;
                     case 1:
-                        employees = context.Employees.Where(x => x.IsStillEmployed == true).ToList();
+                        employees = context.Employees.Where(x => x.IsStillEmployed == true && x.UserId == userId).ToList();
                         break;
                     case 2:
-                        employees = context.Employees.Where(x => x.IsStillEmployed == false).ToList();
+                        employees = context.Employees.Where(x => x.IsStillEmployed == false && x.UserId == userId).ToList();
                         break;
                 }
                 return employees.Select(x => x.ToWrapper());

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -36,6 +37,8 @@ namespace EmployeesManagementApp.ViewModels
             }
             SetValueIsStillEmployed();
         }
+        public RelayCommand CloseCommand { get; set; }
+        public RelayCommand ConfirmCommand { get; set; }
 
         private string _isStillEmployed;
 
@@ -73,6 +76,7 @@ namespace EmployeesManagementApp.ViewModels
                 OnPropertyChanged();
             }
         }
+
         private void SetValueIsStillEmployed()
         {
             if (Employee.IsStillEmployed)
@@ -86,13 +90,14 @@ namespace EmployeesManagementApp.ViewModels
         }
         private void Confirm(object obj)
         {
+            var userName = Thread.CurrentPrincipal.Identity.Name;
+
             if (!Employee.IsValid)
                 return;
-
             if (!IsUpdate)
-                _employeeRepository.Add(Employee);
+                _employeeRepository.Add(Employee, userName);
             else
-                _employeeRepository.Edit(Employee);
+                _employeeRepository.Edit(Employee, userName);
 
             CloseWindow(obj);
         }
@@ -107,8 +112,5 @@ namespace EmployeesManagementApp.ViewModels
             var window = obj as Window;
             window.Close();
         }
-
-        public ICommand CloseCommand { get; set; }
-        public ICommand ConfirmCommand { get; set; }
     }
 }

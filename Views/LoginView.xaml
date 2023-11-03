@@ -10,7 +10,7 @@
         d:DataContext="{d:DesignInstance Type=vievmodels:LoginViewModel}"
         mc:Ignorable="d"
         Title="Logowanie" 
-        Height="220" 
+        Height="250" 
         Width="350"
         WindowStartupLocation="CenterScreen"
         Name="LoginWindow"
@@ -34,54 +34,83 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
+
+        <TextBlock 
+            Text="{Binding AuthenticatedUser}" 
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+            FontWeight="Bold"
+            Margin="5"/>
 
         <Label
             Content="Wpisz nazwę użytkownika i hasło"
             Margin="5"
-            Grid.ColumnSpan="2"/>
+            Grid.ColumnSpan="2"
+            Grid.Row="1"/>
 
         <Label
             Content="Nazwa użytkownika:"
             Margin="5"
-            Grid.Row="1"/>
+            Grid.Row="2"/>
 
         <TextBox
             Name="LoginTextBox"
             Margin="5"
-            Grid.Row="1"
-            Grid.Column="1"/>
+            Grid.Row="2"
+            Grid.Column="1"
+            IsEnabled="{Binding IsNotAuthenticated}"/>
 
         <Label
             Content="Hasło użytkownika:"
             Margin="5"
-            Grid.Row="2"/>
+            Grid.Row="3"/>
 
         <PasswordBox
             Name="PasswordBox"
             Margin="5"
-            Grid.Row="2"
-            Grid.Column="1"/>
+            Grid.Row="3"
+            Grid.Column="1"
+            IsEnabled="{Binding IsNotAuthenticated}"/>
 
         <CheckBox
             Content="Zapamiętaj mnie"
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.Column="1"
             Margin="5"
-            IsChecked="{Binding RememberMe}"/>
+            IsChecked="{Binding RememberMe}"
+            IsEnabled="{Binding IsNotAuthenticated}"/>
 
         <StackPanel
-            Grid.Row="4"
+            Grid.Row="5"
             Orientation="Horizontal"
             HorizontalAlignment="Right"
             Grid.ColumnSpan="2">
 
             <Button
-            Command="{Binding OkCommand}"
+            Command="{Binding LoginCommand}"
             Margin="5"
             Height="25"
             Width="100"
-            Content="Ok" >
+            Content="Zaloguj się" >
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource loginParamsConverter}">
+                        <Binding ElementName="LoginWindow" />
+                        <Binding ElementName="PasswordBox" />
+                        <Binding ElementName="LoginTextBox" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
+
+            <Button
+            Command="{Binding LogoutCommand}"
+            Visibility="{Binding IsAuthenticated, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Margin="5"
+            Height="25"
+            Width="100"
+            Content="Wyloguj się">
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource loginParamsConverter}">
                         <Binding ElementName="LoginWindow" />
@@ -97,7 +126,7 @@
             Margin="5"
             Height="25"
             Width="100"
-            Content="Anuluj"/>
+            Content="Wyjdź"/>
         </StackPanel>
 
     </Grid>

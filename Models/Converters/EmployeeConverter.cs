@@ -26,7 +26,7 @@ namespace EmployeesManagementApp.Models.Converters
                 IsStillEmployed = model.IsStillEmployed
             };
         }
-        public static Employee ToDao(this EmployeeWrapper model)
+        public static Employee ToDao(this EmployeeWrapper model, int userId)
         {
             return new Employee
             {
@@ -38,7 +38,8 @@ namespace EmployeesManagementApp.Models.Converters
                 Position = model.Position,
                 DateOfEmployment = model.DateOfEmployment,
                 DateOfDissmissed = model.DateOfDissmissed,
-                IsStillEmployed = model.IsStillEmployed
+                IsStillEmployed = model.IsStillEmployed,
+                UserId = userId
             };
         }
     }

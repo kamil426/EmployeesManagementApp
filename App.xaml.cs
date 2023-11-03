@@ -1,4 +1,5 @@
-﻿using MahApps.Metro.Controls;
+﻿using EmployeesManagementApp.Models.Identity;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows;
 
 namespace EmployeesManagementApp
@@ -15,13 +17,20 @@ namespace EmployeesManagementApp
     /// </summary>
     public partial class App : Application
     {
-        public string UserName;
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             var metroWindow = Current.MainWindow as MetroWindow;
             metroWindow.ShowMessageAsync("Nieoczekiwany wyjątek", "Wystąpił nieoczekiwany wyjątek."
                 + Environment.NewLine + e.Exception.Message);
             e.Handled = true;
+        }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+
+            CustomPrincipal customPrincipal = new CustomPrincipal();
+            AppDomain.CurrentDomain.SetThreadPrincipal(customPrincipal);
+
+            base.OnStartup(e);
         }
     }
 }

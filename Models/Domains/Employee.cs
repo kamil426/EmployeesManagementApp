@@ -19,5 +19,7 @@ namespace EmployeesManagementApp.Models.Domains
         public decimal Earnings { get; set; }
         public bool IsStillEmployed { get; set; }
         public string Comments { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 }

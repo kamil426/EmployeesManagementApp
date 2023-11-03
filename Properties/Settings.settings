@@ -17,10 +17,10 @@
     <Setting Name="userPassword" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="rememberMe" Type="System.Boolean" Scope="User">
+    <Setting Name="rememberUserName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="currentUser" Type="System.String" Scope="User">
+    <Setting Name="rememberUserPassword" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

@@ -8,29 +8,24 @@ using System.Threading.Tasks;
 
 namespace EmployeesManagementApp.Models.Configurations
 {
-    public class EmployeeConfiguration : EntityTypeConfiguration<Employee>
+    public class UserConfiguration : EntityTypeConfiguration<User>
     {
-        public EmployeeConfiguration()
+        public UserConfiguration()
         {
-            ToTable("dbo.Employees");
+            ToTable("dbo.Users");
             HasKey(x => x.Id);
 
-            Property(x => x.Name)
+            Property(x => x.UserName)
                 .IsRequired()
                 .HasMaxLength(50);
 
-            Property(x => x.LastName)
+            Property(x => x.Email)
                 .IsRequired()
                 .HasMaxLength(50);
 
-            Property(x => x.Earnings)
-                .HasPrecision(18, 2);
-
-            Property(x => x.DateOfEmployment)
-                .IsRequired();
-
-            Property(x => x.UserId)
-                .IsRequired();
+            Property(x => x.HashedPassword)
+                .IsRequired()
+                .HasMaxLength(100);
         }
     }
 }

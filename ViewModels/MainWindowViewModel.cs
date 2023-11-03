@@ -1,6 +1,8 @@
 ﻿using EmployeesManagementApp.Commands;
 using EmployeesManagementApp.Models;
+using EmployeesManagementApp.Models.Converters;
 using EmployeesManagementApp.Models.Domains;
+using EmployeesManagementApp.Models.Identity;
 using EmployeesManagementApp.Models.Wrappers;
 using EmployeesManagementApp.Properties;
 using EmployeesManagementApp.Repository;
@@ -12,7 +14,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -22,6 +26,7 @@ namespace EmployeesManagementApp.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private EmployeeRepository _employeeRepository = new EmployeeRepository();
+        private UserRepository _userRepository = new UserRepository();
         public MainWindowViewModel()
         {
             AddEmployeeCommand = new RelayCommand(AddEditEmployee);
@@ -30,67 +35,16 @@ namespace EmployeesManagementApp.ViewModels
             AppSettingsCommand = new RelayCommand(OpenAppSettings);
             FilterChangedCommand = new RelayCommand(FilterChanged);
             LoginCommand = new RelayCommand(Login);
-            MainWindowClosedCommand = new RelayCommand(MainWindowClosed);
-
-            CheckConnection();
+            
+            LoginAndCheckConnection();
         }
 
-        public ICommand AddEmployeeCommand { get; set; }
-        public ICommand EditEmployeeCommand { get; set; }
-        public ICommand DissmissEmployeeCommand { get; set; }
-        public ICommand AppSettingsCommand { get; set; }
-        public ICommand FilterChangedCommand { get; set; }
-        public ICommand LoginCommand { get; set; }
-        public ICommand MainWindowClosedCommand { get; set; }
-
-        private string _contentButtonLogin;
-
-        public string ContentButtonLogin
-        {
-            get { return _contentButtonLogin; }
-            set 
-            {
-                _contentButtonLogin = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _headerText;
-
-        public string HeaderText
-        {
-            get { return _headerText; }
-            set 
-            {
-                _headerText = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _canAddData;
-
-        public bool CanAddData
-        {
-            get { return _canAddData; }
-            set 
-            {
-                _canAddData = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-        private bool _canDisplayData;
-
-        public bool CanDisplayData
-        {
-            get { return _canDisplayData; }
-            set 
-            {
-                _canDisplayData = value; 
-                OnPropertyChanged();
-            }
-        }
+        public RelayCommand AddEmployeeCommand { get; set; }
+        public RelayCommand EditEmployeeCommand { get; set; }
+        public AsyncRelayCommand DissmissEmployeeCommand { get; set; }
+        public RelayCommand AppSettingsCommand { get; set; }
+        public RelayCommand FilterChangedCommand { get; set; }
+        public RelayCommand LoginCommand { get; set; }
 
         private int _filterIsStillEmployed;
 
@@ -140,60 +94,28 @@ namespace EmployeesManagementApp.ViewModels
             }
         }
 
-        private void MainWindowClosed(object obj)
+        public bool IsAuthenticated
         {
-            if(!Settings.Default.rememberMe)
-            {
-                Settings.Default.currentUser = null;
-                Settings.Default.Save();
-            }
-        }
-
-        private void CheckDataAndUser()
-        {
-            if (!string.IsNullOrWhiteSpace(Settings.Default.currentUser))
-            {
-                CanAddData = true;
-                ContentButtonLogin = "Wyloguj się";
-
-                if (!Employees.Any())
-                {
-                    HeaderText = "Brak danych!";
-                    return;
-                }
-                CanDisplayData = true;
-            }
-            else
-            {
-                CanDisplayData= false;
-                CanAddData= false;
-                ContentButtonLogin = "Logowanie";
-                HeaderText = "Zaloguj się aby móc uzyskać dostęp do danych";
-            }
+            get { return Thread.CurrentPrincipal.Identity.IsAuthenticated; }
         }
 
         private void Login(object obj)
         {
-            if(ContentButtonLogin.StartsWith("L"))
-            {
-                var loginWindow = new LoginView();
-                loginWindow.ShowDialog();
-            }
-            else
-            {
-                Settings.Default.currentUser = null;
-                Settings.Default.rememberMe = false;
-                Settings.Default.Save();
-            }
-            CheckDataAndUser();
+            var openLoginWindowFromButton = true;
+            var loginWindow = new LoginView(openLoginWindowFromButton);
+            loginWindow.ShowDialog();
+            RefreshDiary();
+            OnPropertyChanged("IsAuthenticated");
         }
 
         private void FilterChanged(object obj)
         {
-            Employees = new ObservableCollection<EmployeeWrapper>(_employeeRepository.GetEmployees(FilterIsStillEmployed));
+            var userName = Thread.CurrentPrincipal.Identity.Name;
+
+            Employees = new ObservableCollection<EmployeeWrapper>(_employeeRepository.GetEmployees(FilterIsStillEmployed, userName));
         }
 
-        public async void CheckConnection()
+        public async void LoginAndCheckConnection()
         {
             using (var context = new ApplicationDBContext())
             {
@@ -201,8 +123,6 @@ namespace EmployeesManagementApp.ViewModels
                 {
                     context.Database.Connection.Open();
                     context.Database.Connection.Close();
-                    RefreshDiary();
-                    InitializeFilters();
                 }
                 catch (Exception ex)
                 {
@@ -222,11 +142,18 @@ namespace EmployeesManagementApp.ViewModels
                     else if (messageBoxResult == MessageDialogResult.Negative)
                         Application.Current.Shutdown(0);
                 }
-                finally
-                {
-                    CheckDataAndUser();
-                }
             }
+
+            if(!string.IsNullOrWhiteSpace(Settings.Default.rememberUserName)
+                && !string.IsNullOrWhiteSpace(Settings.Default.rememberUserPassword))
+                LoginRememberUser(Settings.Default.rememberUserName, Settings.Default.rememberUserPassword);
+            else
+            {
+                var loginWindow = new LoginView();
+                loginWindow.ShowDialog();
+            }
+            RefreshDiary();
+            InitializeFilters();
         }
 
         private void OpenAppSettings(object obj)
@@ -263,8 +190,8 @@ namespace EmployeesManagementApp.ViewModels
             var addEditEmployeeWindow = new AddEditEmployeeView(obj as EmployeeWrapper);
             addEditEmployeeWindow.ShowDialog();
             RefreshDiary();
-            CheckDataAndUser();
         }
+
         private void InitializeFilters()
         {
             _filters = new ObservableCollection<Filter>()
@@ -274,13 +201,30 @@ namespace EmployeesManagementApp.ViewModels
                 new Filter() { Id = 2, SelectedFilter = "Zwolnieni"}
             };
         }
+
         private void RefreshDiary()
         {
-            Employees = new ObservableCollection<EmployeeWrapper>(_employeeRepository.GetEmployees());
+            var userName = Thread.CurrentPrincipal.Identity.Name;
+            if (!string.IsNullOrWhiteSpace(userName))
+                Employees = new ObservableCollection<EmployeeWrapper>(_employeeRepository.GetEmployees(userName));
+            else
+                Employees = new ObservableCollection<EmployeeWrapper>();
         }
+
+        public void LoginRememberUser(string rememberUserName, string rememberUserPassword)
+        {
+            var user = _userRepository.GetRememberUser(rememberUserName, rememberUserPassword);
+
+            CustomPrincipal customPrincipal = Thread.CurrentPrincipal as CustomPrincipal;
+            if (customPrincipal == null)
+                throw new ArgumentException("The application's default thread principal must be set to a CustomPrincipal object on startup.");
+
+            customPrincipal.Identity = new CustomIdentity(user.UserName, user.Email, user.Roles.ToArrayRole());
+        }
+
         private bool CanEditEmployee(object obj)
         {
-            return SelectedEmployee != null && !string.IsNullOrWhiteSpace(Settings.Default.currentUser);
+            return SelectedEmployee != null;
         }
 
     }

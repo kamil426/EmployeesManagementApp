@@ -44,5 +44,9 @@ namespace EmployeesManagementApp.Commands
         {
             _execute(parameter);
         }
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
     }
 }

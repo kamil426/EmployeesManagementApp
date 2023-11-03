@@ -22,8 +22,8 @@ namespace EmployeesManagementApp.ViewModels
             CancelCommand = new RelayCommand(Cancel);
             _openAppSettingsFromButton = openAppSettingsFromButton;
         }
-        public ICommand ConnectCommand { get; set; }
-        public ICommand CancelCommand { get; set; }
+        public RelayCommand ConnectCommand { get; set; }
+        public RelayCommand CancelCommand { get; set; }
 
         public string ServerAdress
         {

@@ -8,10 +8,10 @@ namespace EmployeesManagementApp.Views
     /// </summary>
     public partial class LoginView : MetroWindow
     {
-        public LoginView()
+        public LoginView(bool openLoginWindowFromButton = false)
         {
             InitializeComponent();
-            DataContext = new LoginViewModel();
+            DataContext = new LoginViewModel(openLoginWindowFromButton);
         }
     }
 }

@@ -8,26 +8,16 @@ using System.Threading.Tasks;
 
 namespace EmployeesManagementApp.Models.Configurations
 {
-    public class EmployeeConfiguration : EntityTypeConfiguration<Employee>
+    public class RoleConfiguration : EntityTypeConfiguration<Role>
     {
-        public EmployeeConfiguration()
+        public RoleConfiguration()
         {
-            ToTable("dbo.Employees");
+            ToTable("dbo.Roles");
             HasKey(x => x.Id);
 
-            Property(x => x.Name)
+            Property(x => x.RoleName)
                 .IsRequired()
                 .HasMaxLength(50);
-
-            Property(x => x.LastName)
-                .IsRequired()
-                .HasMaxLength(50);
-
-            Property(x => x.Earnings)
-                .HasPrecision(18, 2);
-
-            Property(x => x.DateOfEmployment)
-                .IsRequired();
 
             Property(x => x.UserId)
                 .IsRequired();

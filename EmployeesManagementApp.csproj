@@ -79,10 +79,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Migrations\202311021426539_SetHashedPasswordIsRequiredAndMaxLengthIs100.cs" />
+    <Compile Include="Migrations\202311021426539_SetHashedPasswordIsRequiredAndMaxLengthIs100.designer.cs">
+      <DependentUpon>202311021426539_SetHashedPasswordIsRequiredAndMaxLengthIs100.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Converters\RoleConverter.cs" />
+    <Compile Include="Models\Identity\AnonymousIdentity.cs" />
+    <Compile Include="Models\Identity\CustomIdentity.cs" />
+    <Compile Include="Models\Identity\CustomPrincipal.cs" />
+    <Compile Include="Migrations\202311021240089_AddUserAndRoleToDataBase.cs" />
+    <Compile Include="Migrations\202311021240089_AddUserAndRoleToDataBase.designer.cs">
+      <DependentUpon>202311021240089_AddUserAndRoleToDataBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202311021349287_AddHashedPasswordToUser.cs" />
+    <Compile Include="Migrations\202311021349287_AddHashedPasswordToUser.designer.cs">
+      <DependentUpon>202311021349287_AddHashedPasswordToUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Configurations\RoleConfiguration.cs" />
+    <Compile Include="Models\Configurations\UserConfiguration.cs" />
+    <Compile Include="Models\Domains\Role.cs" />
+    <Compile Include="Models\Domains\User.cs" />
     <Compile Include="Models\Converters\EmployeeConverter.cs" />
     <Compile Include="Models\LoginParams.cs" />
-    <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Wrappers\EmployeeWrapper.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="ViewModels\ConfigConnectionWithDbViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="Views\ConfigConnectionWithDBView.xaml.cs">
@@ -91,9 +111,9 @@
     <Compile Include="Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Resources\ReverseBooleanToVisibilityConverter.cs" />
-    <Compile Include="Views\Resources\LoginParamsConverter.cs" />
-    <Compile Include="Views\Resources\YesNoToBooleanConverter.cs" />
+    <Compile Include="Models\Converters\ReverseBooleanToVisibilityConverter.cs" />
+    <Compile Include="Models\Converters\LoginParamsConverter.cs" />
+    <Compile Include="Models\Converters\YesNoToBooleanConverter.cs" />
     <Page Include="Views\AddEditEmployeeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -153,6 +173,15 @@
     </Compile>
     <EmbeddedResource Include="Migrations\202307040904032_Init.resx">
       <DependentUpon>202307040904032_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202311021240089_AddUserAndRoleToDataBase.resx">
+      <DependentUpon>202311021240089_AddUserAndRoleToDataBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202311021349287_AddHashedPasswordToUser.resx">
+      <DependentUpon>202311021349287_AddHashedPasswordToUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202311021426539_SetHashedPasswordIsRequiredAndMaxLengthIs100.resx">
+      <DependentUpon>202311021426539_SetHashedPasswordIsRequiredAndMaxLengthIs100.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

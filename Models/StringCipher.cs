@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeesManagementApp.Models
 {
-    public static class ApplicationUser
+    internal class StringCipher
     {
-        public static string UserName { get; set; }
     }
 }
