@@ -7,7 +7,7 @@ Instrukcja instalacji:
 4. Przechodzimy do zakładki na dole programu Package Manager Console, gdzie wyświetli się komunikat z przyciskiek restore i klikamy go
 5. Jeśli mamy bazę danych SQL Server na lokalnym komputerze, to wpisujemy nasepującą komendę w Package Manager Console:
 update-database -ConnectionProviderName System.Data.SqlClient -ConnectionString "Server = (local)\SQLEXPRESS; Database = EmployeesManagementApp; User Id = (twoja nazwa użytkownika); Password = (twoje hasło);"
-(local) to dmyślny adres serwera na komputerze lokalnym, a SQLEXPRESS to domyślna nazwa servera.
+(local) to domyślny adres serwera na komputerze lokalnym, a SQLEXPRESS to domyślna nazwa servera.
 6. Następnie uruchamiamy aplikację
 7. Zostaniemy poproszeni o wpisanie danych do połączenia się z bazą danych. Należy wpisać te same dane, które przakazaliśmy w pkt. 5 do ConnectionString-a
 8. Następnie aplikacja się zrestartuje i utworzy 2 konta użytkoników:
