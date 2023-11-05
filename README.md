@@ -12,6 +12,6 @@ update-database -ConnectionProviderName System.Data.SqlClient -ConnectionString 
 7. Zostaniemy poproszeni o wpisanie danych do połączenia się z bazą danych. Należy wpisać te same dane, które przakazaliśmy w pkt. 5 do ConnectionString-a
 8. Następnie aplikacja się zrestartuje i utworzy 2 konta użytkoników:
 - nazwa użytkownika: Mark, hasło: Mark,
-- nazwa użytkownika: John, hasło: John
-Należy się zalogować na jedno z nich
-9. Mozemy teraz korzystać z naszej aplikacji!
+- nazwa użytkownika: John, hasło: John.
+9. Należy się zalogować na jedno z nich.
+10. Mozemy teraz korzystać z naszej aplikacji!
